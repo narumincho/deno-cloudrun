@@ -2,4 +2,4 @@ FROM denoland/deno:latest
 
 COPY [".", "."]
 
-CMD [ "deno", "run", "-A", "./startInCloudRun.tsx" ]
+CMD [ "deno", "run", "-A", "./startInCloudRun.ts" ]

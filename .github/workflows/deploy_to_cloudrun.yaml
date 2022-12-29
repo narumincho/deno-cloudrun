@@ -4,11 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-
+  main-job:
+    runs-on: ubuntu-22.04
     steps:
       - id: 'auth'
         uses: 'google-github-actions/auth@v1'

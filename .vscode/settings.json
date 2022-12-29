@@ -8,12 +8,17 @@
     "configurations": [
       {
         "request": "launch",
-        "name": "deno run main.ts",
+        "name": "deno run",
         "type": "node",
         "program": "${workspaceFolder}/main.tsx",
         "cwd": "${workspaceFolder}",
-        "runtimeExecutable": "/home/gitpod/.deno/bin/deno",
-        "runtimeArgs": ["run", "--inspect", "--allow-net=:8000"],
+        "runtimeExecutable": "deno",
+        "runtimeArgs": [
+          "run",
+          "--inspect",
+          "--allow-net=:8000",
+          "--allow-env=NODE_ENV"
+        ],
         "attachSimplePort": 9229
       }
     ],

@@ -1,8 +1,8 @@
 /** @jsx h */
 import { h } from "npm:preact@10.11.3";
 import { renderToString } from "npm:preact-render-to-string@5.2.6";
-import { css } from "npm:@emotion/css@11.10.5";
 import { serve } from "https://deno.land/std@0.170.0/http/server.ts";
+import { App } from "./App.ts";
 
 export const main = (parameter: { readonly portNumber: number }) => {
   serve((_req: Request): Response => {
@@ -18,17 +18,16 @@ export const main = (parameter: { readonly portNumber: number }) => {
             {`* {
               background: black;
               color: white;
-            }`}
+            }
+
+            .box {
+              padding: 32px;
+            }
+            `}
           </style>
         </head>
         <body>
-          <div>
-            <h1>deno on Cloud Run</h1>
-            <div>それな..?</div>
-            <div className={css({ background: "red" })}>
-              {new Date().toISOString()}
-            </div>
-          </div>
+          <App />
         </body>
       </html>
     );

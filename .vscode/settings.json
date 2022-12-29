@@ -3,6 +3,8 @@
   "deno.lint": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "denoland.vscode-deno",
+  "deno.inlayHints.functionLikeReturnTypes.enabled": false,
+  "deno.inlayHints.parameterNames.enabled": "none",
   "launch": {
     "version": "0.2.0",
     "configurations": [

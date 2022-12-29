@@ -1,0 +1,22 @@
+{
+  "deno.enable": true,
+  "deno.lint": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "request": "launch",
+        "name": "deno run main.ts",
+        "type": "node",
+        "program": "${workspaceFolder}/main.tsx",
+        "cwd": "${workspaceFolder}",
+        "runtimeExecutable": "/home/gitpod/.deno/bin/deno",
+        "runtimeArgs": ["run", "--inspect", "--allow-net=:8000"],
+        "attachSimplePort": 9229
+      }
+    ],
+    "compounds": []
+  }
+}

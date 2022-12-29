@@ -10,7 +10,7 @@
         "request": "launch",
         "name": "deno run",
         "type": "node",
-        "program": "${workspaceFolder}/main.tsx",
+        "program": "${workspaceFolder}/startInDev.ts",
         "cwd": "${workspaceFolder}",
         "runtimeExecutable": "deno",
         "runtimeArgs": [

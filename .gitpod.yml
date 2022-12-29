@@ -8,4 +8,4 @@ vscode:
 
 tasks:
   - name: start
-    command: deno run --check --watch --allow-net=:8000 ./main.tsx
+    command: deno run --check --watch --allow-net=:8000 --allow-env=NODE_ENV ./startInDev.ts

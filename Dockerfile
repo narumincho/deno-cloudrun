@@ -1,5 +1,7 @@
-FROM denoland/deno:latest
+FROM rust:latest
 
 COPY [".", "."]
 
-CMD [ "deno", "run", "-A", "./startInCloudRun.ts" ]
+RUN ["cargo", "build", "--release", "--all-features"]
+
+CMD [ "./target/release/deno-cloudrun" ]

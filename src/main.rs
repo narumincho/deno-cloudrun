@@ -1,23 +1,15 @@
 use std::convert::Infallible;
-use std::net::SocketAddr;
-
 use http_body_util::Full;
 use hyper::body::Bytes;
 use hyper::server::conn::http1;
 use hyper::service::service_fn;
-use hyper::{Request, Response};
-use tokio::net::TcpListener;
+use hyper::{Response};
 
-fn hello_world(
+async fn hello_world(
     _req: http::Request<hyper::body::Incoming>,
-) -> http::Result<hyper::Response<http_body_util::Full<hyper::body::Bytes>>> {
-    http::Response::builder()
-        .header(
-            http::header::CONTENT_TYPE,
-            http::header::HeaderValue::from_static("text/html"),
-        )
-        .body(http_body_util::Full::from(format!(
-            "<!doctype html>
+) -> Result<hyper::Response<http_body_util::Full<hyper::body::Bytes>>,  Infallible> {
+    let html: String = format!(
+        "<!doctype html>
 <html lang=\"ja\">
 
 <head>
@@ -25,24 +17,33 @@ fn hello_world(
 <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">
 <style>
 body {{
-    font-size: 48px;
-    color: white;
-    background-color: black;
+font-size: 48px;
+color: white;
+background-color: black;
 }}
 </style>
 </head>
 
 <body>
-  <div>Rust のサーバーを起動できた!</div>
-  <div>現在の時刻 {}</div>
-  <div>ランダム {}</div>
+<div>Rust のサーバーを起動できた!</div>
+<div>現在の時刻 {}</div>
+<div>ランダム {}</div>
 </body>
 
 </html>
 ",
-            chrono::Utc::now(),
-            uuid::Uuid::new_v4()
-        )))
+        chrono::Utc::now(),
+        uuid::Uuid::new_v4()
+    );
+    match http::Response::builder()
+    .header(
+        http::header::CONTENT_TYPE,
+        http::header::HeaderValue::from_static("text/html"),
+    )
+    .body(http_body_util::Full::from(html)) {
+        Ok(response) => Ok(response),
+        Err(_) => Ok(Response::new(Full::new(Bytes::from("error response"))))
+    }
 }
 
 #[tokio::main]

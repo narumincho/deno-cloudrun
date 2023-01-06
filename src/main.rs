@@ -1,12 +1,22 @@
-async fn hello_world(
-    _req: http::Request<hyper::Body>,
-) -> http::Result<hyper::Response<hyper::Body>> {
+use std::convert::Infallible;
+use std::net::SocketAddr;
+
+use http_body_util::Full;
+use hyper::body::Bytes;
+use hyper::server::conn::http1;
+use hyper::service::service_fn;
+use hyper::{Request, Response};
+use tokio::net::TcpListener;
+
+fn hello_world(
+    _req: http::Request<hyper::body::Incoming>,
+) -> http::Result<hyper::Response<http_body_util::Full<hyper::body::Bytes>>> {
     http::Response::builder()
         .header(
             http::header::CONTENT_TYPE,
             http::header::HeaderValue::from_static("text/html"),
         )
-        .body(<hyper::Body as core::convert::From<String>>::from(format!(
+        .body(http_body_util::Full::from(format!(
             "<!doctype html>
 <html lang=\"ja\">
 
@@ -40,14 +50,22 @@ async fn main() {
     let port_number = get_port_number_from_env_variable();
     let address = std::net::SocketAddr::from(([0, 0, 0, 0], port_number));
 
-    let make_svc = hyper::service::make_service_fn(|_conn| async {
-        Ok::<_, std::convert::Infallible>(hyper::service::service_fn(hello_world))
-    });
+    let listener = tokio::net::TcpListener::bind(address).await.expect("tcp 接続を確立できなかった");
 
-    let server = hyper::Server::bind(&address).serve(make_svc);
-    println!("サーバーを起動できた http://localhost:{}", port_number);
-    if let Err(e) = server.await {
-        eprintln!("server error: {}", e);
+    loop {
+        let (stream, _) = listener.accept().await.expect("tcp のストリーム読み取り時にエラー");
+
+        // Spawn a tokio task to serve multiple connections concurrently
+        tokio::task::spawn(async move {
+            // Finally, we bind the incoming connection to our `hello` service
+            if let Err(err) = http1::Builder::new()
+                // `service_fn` converts our function in a `Service`
+                .serve_connection(stream, service_fn(hello_world))
+                .await
+            {
+                println!("Error serving connection: {:?}", err);
+            }
+        });
     }
 }
 

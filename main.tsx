@@ -2,10 +2,22 @@
 import { h } from "npm:preact@10.11.3";
 import { renderToString } from "npm:preact-render-to-string@5.2.6";
 import { css } from "npm:@emotion/css@11.10.5";
-import { serve } from "https://deno.land/std@0.170.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 
 export const main = (parameter: { readonly portNumber: number }) => {
-  serve((_req: Request): Response => {
+  serve(async (request: Request): Promise<Response> => {
+    const path = new URL(request.url).pathname.slice(1);
+    console.log(path);
+    if (path !== "") {
+      const r2Response = await fetch(
+        "https://pub-5887a2dc47a745a49c111fa8f58b8d75.r2.dev/" + path,
+      );
+      if (r2Response.ok) {
+        return new Response(await r2Response.arrayBuffer());
+      }
+      return new Response("error", { status: 400 });
+    }
+
     const page: h.JSX.Element = (
       <html lang="ja">
         <head>

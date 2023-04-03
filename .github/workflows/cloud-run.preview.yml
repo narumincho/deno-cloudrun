@@ -1,0 +1,31 @@
+name: Cloud Run (Preview)
+
+on: pull_request
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@main
+
+      - id: "auth"
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/911250965130/locations/global/workloadIdentityPools/github-actions-id-pool/providers/github
+          service_account: github-actions@webauthn-test-373907.iam.gserviceaccount.com
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Deploy revision with tag
+        run: >
+          gcloud run deploy deno-preview
+          --platform managed
+          --allow-unauthenticated
+          --source .
+          --tag pr-${{ github.event.pull_request.number }}
+          --no-traffic

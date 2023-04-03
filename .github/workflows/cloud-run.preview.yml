@@ -29,4 +29,3 @@ jobs:
           --allow-unauthenticated
           --source .
           --tag pr-${{ github.event.pull_request.number }}
-          --no-traffic

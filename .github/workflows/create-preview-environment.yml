@@ -1,0 +1,60 @@
+name: Create Preview Environment
+
+on: pull_request
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@main
+
+      - id: "auth"
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/911250965130/locations/global/workloadIdentityPools/github-actions-id-pool/providers/github
+          service_account: github-actions@webauthn-test-373907.iam.gserviceaccount.com
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Deploy revision with tag
+        run: >
+          gcloud run deploy deno-preview
+          --platform managed
+          --region us-central1
+          --allow-unauthenticated
+          --source .
+          --tag pr-${{ github.event.pull_request.number }}
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: github-actions[bot]
+          body-includes: "Preview"
+
+      - name: Create Preview URL
+        id: preview-url
+        run: echo "::set-output name=value::https://pr-${{ github.event.pull_request.number }}---deno-preview-ewaolst5ya-uc.a.run.app"
+
+      - name: Get datetime for now
+        id: datetime
+        run: echo "::set-output name=value::$(date)"
+        env:
+          TZ: Asia/Tokyo
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Visit the :eyes: **Preview** :eyes: for this PR (updated for commit ${{ github.event.pull_request.head.sha }}):
+            <${{ steps.preview-url.outputs.value }}>
+            <sub>(:fire: updated at ${{ steps.datetime.outputs.value }})</sub>
+          edit-mode: replace

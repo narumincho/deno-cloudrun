@@ -1,5 +1,9 @@
 FROM denoland/deno:latest
 
-COPY [".", "."]
+ENV PORT 8080
 
-CMD [ "deno", "run", "-A", "./startInCloudRun.ts" ]
+COPY . .
+
+RUN deno cache ./startInCloudRun.ts
+
+CMD deno run -A ./startInCloudRun.ts

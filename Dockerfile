@@ -1,9 +1,15 @@
+FROM denoland/deno:latest AS build
+
+WORKDIR /app
+
+COPY . .
+
+RUN deno compile -A ./startInCloudRun.ts
+
 FROM denoland/deno:latest
 
 ENV PORT 8080
 
-COPY . .
+COPY --from=build /app/startInCloudRun /app/startInCloudRun
 
-RUN deno cache ./startInCloudRun.ts
-
-CMD deno run -A ./startInCloudRun.ts
+CMD /app/startInCloudRun

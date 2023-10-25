@@ -37,7 +37,11 @@ export const main = (parameter: { readonly portNumber: number }) => {
           <body>
             <div>
               <h1>deno on Cloud Run</h1>
-              <div>それな..?</div>
+              <div>
+                Deno Deploy の方がデプロイが速いけど,
+                ffmpegとかの外部ライブラリを使いたいときは,
+                DockerfileでインストールができるCloud Runの方が良い
+              </div>
               <div className={css({ background: "red" })}>
                 {new Date().toISOString()}
               </div>

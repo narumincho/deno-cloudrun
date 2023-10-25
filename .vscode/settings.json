@@ -15,8 +15,9 @@
         "runtimeExecutable": "deno",
         "runtimeArgs": [
           "run",
+          "--watch",
           "--inspect",
-          "--allow-net=:8000",
+          "--allow-net",
           "--allow-env=NODE_ENV"
         ],
         "attachSimplePort": 9229
